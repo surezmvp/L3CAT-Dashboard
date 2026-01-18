@@ -7,29 +7,19 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   if (pathname.startsWith("/dashboard")) {
-    if (!token) {
-      return NextResponse.redirect(new URL("/", request.url))
-    }
+    if (!token) return NextResponse.redirect(new URL("/", request.url))
 
     try {
       const memberRes = await fetch(
         `https://discord.com/api/v10/users/@me/guilds/1458604301332250657/member`,
-        {
-          headers: { Authorization: `Bearer ${token.accessToken}` },
-          cache: "no-store"
-        }
+        { headers: { Authorization: `Bearer ${token.accessToken}` }, cache: "no-store" }
       )
 
-      if (!memberRes.ok) {
-        return NextResponse.redirect(new URL("/bro", request.url))
-      }
+      if (!memberRes.ok) return NextResponse.redirect(new URL("/bro", request.url))
 
       const member = await memberRes.json()
       const hasRole = member.roles?.includes("1458605702024003606")
-
-      if (!hasRole) {
-        return NextResponse.redirect(new URL("/bro", request.url))
-      }
+      if (!hasRole) return NextResponse.redirect(new URL("/bro", request.url))
 
     } catch {
       return NextResponse.redirect(new URL("/bro", request.url))
